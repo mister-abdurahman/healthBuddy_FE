@@ -1,0 +1,57 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Poppins:wght@400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* .app-layout {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(14, 1fr);
+}
+.header-layout {
+  grid-column: 2/-1;
+}
+.sidebar-layout {
+  grid-column: 1/2;
+  grid-row: 1/-1;
+}
+.main-layout {
+  grid-column: 2/-1;
+  grid-row: 2/-1;
+} */
+
+/* surface duo */
+@media screen and (min-width: 530px) and (max-width: 550px) {
+  .hamburger_position_open {
+    margin-left: 12rem;
+  }
+  .hamburger_position_close {
+    margin-left: 1rem;
+  }
+}
+/* iphone xr */
+@media screen and (min-width: 410px) and (max-width: 430px) {
+  .hamburger_position_open {
+    margin-left: 9rem;
+  }
+  .hamburger_position_close {
+    margin-left: 1rem;
+  }
+}
+
+/* scrollbar style */
+.styled-scrollbar::-webkit-scrollbar {
+  width: 6px; /* Width of the scrollbar */
+  border-radius: 10px;
+}
+
+.styled-scrollbar::-webkit-scrollbar-track {
+  background: #f2f5ff; /* Color of the track */
+  border-radius: 10px;
+}
+
+.styled-scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: #2c3d8f; /* Color of the scrollbar thumb */
+}
