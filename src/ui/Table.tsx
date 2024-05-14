@@ -13,17 +13,13 @@ import { useMediaQuery, useTheme } from "@mui/material";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import { useNavigate } from "react-router-dom";
 
-const column = ["Date", "Doctor", "Status"];
-const row = [
-  { id: 1, date: "12/10/2024", doctor: "Dr. Ade", status: "pending" },
-  { id: 2, date: "12/10/2024", doctor: "Dr. Ade", status: "done" },
-  { id: 3, date: "12/10/2024", doctor: "Dr. Ade", status: "done" },
-];
-
-function DataTable() {
-  const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-
+function DataTable({
+  column,
+  row,
+}: {
+  column: string[];
+  row: { id: string; date: string; doctor: string; status: string }[];
+}) {
   const navigate = useNavigate();
 
   return (
@@ -42,13 +38,22 @@ function DataTable() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {row.map((el) => (
+          {row?.map((el) => (
             <TableRow key={el.id}>
               <TableCell>{el.date}</TableCell>
               <TableCell>{el.doctor}</TableCell>
-              <TableCell>{el.status}</TableCell>
+              <TableCell>
+                <span
+                  className={`px-2 py-1 rounded-full capitalize ${
+                    el.status == "done" ? "bg-green-200" : "bg-yellow-200"
+                  }`}
+                >
+                  {el.status}
+                </span>
+              </TableCell>
               <TableCell>
                 <RemoveRedEyeIcon
+                  className="cursor-pointer"
                   onClick={() => navigate(`/appointment/${el.id}`)}
                 />
               </TableCell>

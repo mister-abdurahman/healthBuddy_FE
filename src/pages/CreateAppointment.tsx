@@ -5,9 +5,7 @@ import { useLocation } from "react-router-dom";
 
 export const CreateAppointment = () => {
   const location = useLocation();
-  const appointmentId = new URLSearchParams(location?.search)?.get(
-    "appointmentId"
-  );
+  const appointmentId = new URLSearchParams(location?.search)?.get("id");
   return (
     <PageContainer
       title={`${

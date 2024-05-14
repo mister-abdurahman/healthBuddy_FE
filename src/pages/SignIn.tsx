@@ -1,19 +1,22 @@
-import * as React from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { NavLink, useNavigate } from "react-router-dom";
-import { useAppContext } from "../context/AppContext";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useLoginUserMutation } from "../Data/Api/ApiHandler";
+import { getToken, signIn } from "../Data/State/AuthSlice";
+import { useDispatch } from "react-redux";
+import { getInfo } from "../Data/State/UserSlice";
+import { SpinnerMini } from "../ui/SpinnerMini";
 
 function Copyright(props: any) {
   return (
@@ -29,52 +32,117 @@ function Copyright(props: any) {
     </Typography>
   );
 }
+// interface IsignInInputs {
+//   firstName: string;
+//   lastName: string;
+//   email: string;
+//   password: string;
+//   phoneNumber: string;
+//   profilePicture?: string;
+//   facebookHandle?: string;
+//   twitterHandle?: string;
+//   linkedInHandle?: string;
+//   address: string;
+//   state: string;
+// }
 
-// TODO remove, this demo shouldn't need to reset the theme.
-const defaultTheme = createTheme();
+const schema = yup.object().shape({
+  email: yup.string().email().required(),
+  password: yup.string().min(6).max(32).required(),
+});
 
 export default function SignIn() {
-  const { signInOut } = useAppContext();
+  // const { signInOut } = useAppContext();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+  const [loginUser, { isLoading: loadingLogin }] = useLoginUserMutation();
 
-    signInOut();
-    navigate("/dashboard");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({ resolver: yupResolver(schema) });
+
+  const submit: SubmitHandler<FieldValues> = async (data) => {
+    console.log(data);
+
+    try {
+      const payload = await loginUser(data).unwrap();
+
+      localStorage.setItem(
+        "userData",
+        JSON.stringify({
+          _id: payload.user._id,
+          firstName: payload.user.firstName,
+          lastName: payload.user.lastName,
+          email: payload.user.email,
+          phoneNumber: payload.user.phoneNumber,
+          profilePicture: payload.user.profilePicture,
+          facebookHandle: payload.user.facebookHandle,
+          twitterHandle: payload.user.twitterHandle,
+          linkedInHandle: payload.user.linkedInHandle,
+          address: payload.user.address,
+          state: payload.user.state,
+          walletId: payload.user.walletId,
+        })
+      );
+      localStorage.setItem("signedIn", JSON.stringify({ signedIn: true }));
+      localStorage.setItem("token", JSON.stringify({ token: payload.token }));
+
+      dispatch(getToken(payload.token));
+      dispatch(signIn());
+      dispatch(
+        getInfo({
+          _id: payload.user._id,
+          firstName: payload.user.firstName,
+          lastName: payload.user.lastName,
+          email: payload.user.email,
+          phoneNumber: payload.user.phoneNumber,
+          profilePicture: payload.user.profilePicture,
+          facebookHandle: payload.user.facebookHandle,
+          twitterHandle: payload.user.twitterHandle,
+          linkedInHandle: payload.user.linkedInHandle,
+          address: payload.user.address,
+          state: payload.user.state,
+          walletId: payload.user.walletId,
+        })
+      );
+      // console.log("fulfilled", payload);
+      navigate("/");
+    } catch (error: unknown) {
+      // console.error("rejected", error);
+      alert(error.data.message);
+    }
+    reset();
   };
 
   return (
-    <ThemeProvider theme={defaultTheme}>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
+    <Container component="main" maxWidth="xs">
+      <CssBaseline />
+      <Box
+        sx={{
+          marginTop: 8,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Sign In
+        </Typography>
         <Box
-          sx={{
-            marginTop: 8,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
+          component="form"
+          noValidate
+          onSubmit={handleSubmit(submit)}
+          sx={{ mt: 3 }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Sign In
-          </Typography>
-          <Box
-            component="form"
-            noValidate
-            onSubmit={handleSubmit}
-            sx={{ mt: 3 }}
-          >
-            <Grid container spacing={2}>
-              {/* <Grid item xs={12} sm={6}>
+          <Grid container spacing={2}>
+            {/* <Grid item xs={12} sm={6}>
                 <TextField
                   autoComplete="given-name"
                   name="firstName"
@@ -85,7 +153,7 @@ export default function SignIn() {
                   autoFocus
                 />
               </Grid> */}
-              {/* <Grid item xs={12} sm={6}>
+            {/* <Grid item xs={12} sm={6}>
                 <TextField
                   required
                   fullWidth
@@ -95,28 +163,34 @@ export default function SignIn() {
                   autoComplete="family-name"
                 />
               </Grid> */}
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  id="email"
-                  label="Email Address"
-                  name="email"
-                  autoComplete="email"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  name="password"
-                  label="Password"
-                  type="password"
-                  id="password"
-                  autoComplete="new-password"
-                />
-              </Grid>
-              {/* <Grid item xs={12}>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                {...register("email")}
+                autoComplete="email"
+              />
+              <span className="text-xs text-red-600">
+                {errors?.email?.message}
+              </span>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                label="Password"
+                type="password"
+                {...register("password")}
+                id="password"
+                autoComplete="new-password"
+              />
+              <span className="text-xs text-red-600">
+                {errors?.password?.message}
+              </span>
+            </Grid>
+            {/* <Grid item xs={12}>
                 <FormControlLabel
                   control={
                     <Checkbox value="allowExtraEmails" color="primary" />
@@ -130,24 +204,23 @@ export default function SignIn() {
                   }
                 />
               </Grid> */}
+          </Grid>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
+            {loadingLogin ? <SpinnerMini /> : "Sign In"}
+          </Button>
+          <Grid container justifyContent="flex-end">
+            <Grid item>
+              <NavLink to={"/signup"}>Don't have an account? Sign up</NavLink>
             </Grid>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Sign In
-            </Button>
-            <Grid container justifyContent="flex-end">
-              <Grid item>
-                <NavLink to={"/signup"}>Don't have an account? Sign up</NavLink>
-              </Grid>
-            </Grid>
-          </Box>
+          </Grid>
         </Box>
-        <Copyright sx={{ mt: 5 }} />
-      </Container>
-    </ThemeProvider>
+      </Box>
+      <Copyright sx={{ mt: 5 }} />
+    </Container>
   );
 }

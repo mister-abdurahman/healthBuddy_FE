@@ -1,18 +1,20 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../Data/State/store";
 
-export const ProtectedRoute = ({ children }: { children: any }) => {
+export const ProtectedRoute = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
-  // load authenticated user
-  const [isAuthenticated] = useState(true);
-  // if no auth user, redirect to /login
+  // const user = useSelector((state: RootState) => state.user.userDetails);
+  const signedIn = useSelector((state: RootState) => state.auth.isSignIn);
 
-  // call navigate hook inside a fn, thats why we used useEffect.
+  console.log(signedIn);
+
   useEffect(
     function () {
-      if (!isAuthenticated) navigate("/login");
+      if (!signedIn) navigate("/signin");
     },
-    [isAuthenticated, navigate]
+    [signedIn, navigate]
   );
 
   // while loading, show spinner
@@ -24,5 +26,5 @@ export const ProtectedRoute = ({ children }: { children: any }) => {
   //     );
 
   // if authenticated, render app
-  if (isAuthenticated) return children;
+  if (signedIn) return children;
 };

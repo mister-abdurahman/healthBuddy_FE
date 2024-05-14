@@ -21,7 +21,6 @@ const AppProvider = ({ children }: { children: React.ReactNode }) => {
   function closeHamburger() {
     setOpenHamburger(false);
   }
-  console.log(openHamburger);
 
   return (
     <AppContext.Provider

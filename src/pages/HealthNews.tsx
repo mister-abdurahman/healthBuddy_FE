@@ -1,47 +1,25 @@
-import React from "react";
 import { PageContainer } from "../ui/PageContainer";
-import {
-  Button,
-  Card,
-  CardActionArea,
-  CardActions,
-  CardContent,
-  CardMedia,
-  Typography,
-} from "@mui/material";
-import demoImage from "../assets/react.svg";
-import { orange } from "@mui/material/colors";
+import { useGetNewsQuery } from "../Data/Api/ApiHandler";
+import { NewsCard } from "../features/News/NewsCard";
+import { Spinner } from "../ui/Spinner";
+import { ErrorComp } from "../ui/ErrorComp";
 
 export const HealthNews = () => {
+  const {
+    data: news,
+    isLoading: loadingNews,
+    isError: newsError,
+  } = useGetNewsQuery("");
+
+  if (loadingNews) return <Spinner />;
+  if (news?.hasError || newsError) return <ErrorComp message={news?.message} />;
+
   return (
     <PageContainer title="HealthNews">
-      <div>
-        <Card
-          sx={{ maxWidth: 345, marginY: "1.2rem", borderRadius: "1.25rem" }}
-        >
-          <CardActionArea>
-            <CardMedia
-              component="img"
-              height="140"
-              image={demoImage}
-              alt="green iguana"
-            />
-            <CardContent>
-              <Typography gutterBottom variant="h5" component="div">
-                Lizard
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Lizards are a widespread group of squamate reptiles, with over
-                6,000 species, ranging across all continents except Antarctica
-              </Typography>
-            </CardContent>
-          </CardActionArea>
-          <CardActions>
-            <Button size="small" color="primary">
-              Share
-            </Button>
-          </CardActions>
-        </Card>
+      <div className="flex gap-4 flex-wrap">
+        {news.data.map((el, i) => (
+          <NewsCard key={i} news={el} />
+        ))}
       </div>
     </PageContainer>
   );

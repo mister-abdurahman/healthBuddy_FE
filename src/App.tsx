@@ -12,6 +12,9 @@ import SignIn from "./pages/SignIn";
 import { PageNotFound } from "./pages/PageNotFound";
 import { ProtectedRoute } from "./ui/ProtectedRoute";
 import { CreateAppointment } from "./pages/CreateAppointment";
+import { ThemeProvider, createTheme } from "@mui/material";
+
+const defaultTheme = createTheme();
 
 function App() {
   // const { signedIn, signInOut } = useAppContext();
@@ -20,34 +23,36 @@ function App() {
   // return <AppLayout />;
   return (
     <>
-      <BrowserRouter>
-        <Routes>
-          <Route
-            element={
-              <ProtectedRoute>
-                <AppLayout />{" "}
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<Dashboard />}></Route>
-            <Route path="dashboard" element={<Dashboard />}></Route>
-            <Route path="appointments" element={<Appointments />}></Route>
+      <ThemeProvider theme={defaultTheme}>
+        <BrowserRouter>
+          <Routes>
             <Route
-              path="schedule-appointment"
-              element={<CreateAppointment />}
-            ></Route>
-            <Route path="appointment/:id" element={<Appointment />}></Route>
-            <Route path="health-news" element={<HealthNews />}></Route>
-            <Route path="notifications" element={<Notifications />}></Route>
-            <Route path="profile" element={<Profile />}></Route>
-            <Route path="wallet" element={<Wallet />}></Route>
-          </Route>
+              element={
+                <ProtectedRoute>
+                  <AppLayout />{" "}
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<Dashboard />}></Route>
+              <Route index path="dashboard" element={<Dashboard />}></Route>
+              <Route path="appointments" element={<Appointments />}></Route>
+              <Route
+                path="schedule-appointment"
+                element={<CreateAppointment />}
+              ></Route>
+              <Route path="appointment/:id" element={<Appointment />}></Route>
+              <Route path="health-news" element={<HealthNews />}></Route>
+              <Route path="notifications" element={<Notifications />}></Route>
+              <Route path="profile" element={<Profile />}></Route>
+              <Route path="wallet" element={<Wallet />}></Route>
+            </Route>
 
-          <Route path="signup" element={<SignUp />}></Route>
-          <Route path="signin" element={<SignIn />}></Route>
-          <Route path="*" element={<PageNotFound />}></Route>
-        </Routes>
-      </BrowserRouter>
+            <Route path="signup" element={<SignUp />}></Route>
+            <Route path="signin" element={<SignIn />}></Route>
+            <Route path="*" element={<PageNotFound />}></Route>
+          </Routes>
+        </BrowserRouter>
+      </ThemeProvider>
 
       {/* <Toaster
           position="top-center"
