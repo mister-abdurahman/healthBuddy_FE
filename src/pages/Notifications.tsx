@@ -40,10 +40,13 @@ export const Notifications = () => {
       read: true,
     };
 
-    const res = await updateNotification({ id, notification: update });
-    if (res?.hasError)
-      return setToast(true, res?.error?.data?.message, "error");
-    setToast(true, "Notification marked as read", "success");
+    try {
+      await updateNotification({ id, notification: update });
+      setToast(true, "Notification marked as read", "success");
+      
+    } catch (error) {
+      return setToast(true, "Error updating notification", "error");
+    }
 
     // updateNotification({ id, notification: update }).then((res: any) => {
     //   if (res?.hasError)

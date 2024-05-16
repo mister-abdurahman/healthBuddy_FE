@@ -1,8 +1,6 @@
-import React from "react";
 import { Header } from "./Header";
 import { SideBar } from "./SideBar";
 import { MainPage } from "./MainPage";
-import RoutePage from "../config/RoutePage";
 import { Outlet } from "react-router-dom";
 
 export const AppLayout = () => {

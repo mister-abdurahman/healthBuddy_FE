@@ -3,8 +3,8 @@ import Alert from "@mui/material/Alert";
 
 interface IProps {
   open: boolean;
-  close: string;
-  handleClose: () => void;
+  close: boolean;
+  handleClose: (x: boolean) => void;
   severity: string;
   message: string;
 }

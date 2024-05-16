@@ -1,4 +1,3 @@
-import React from "react";
 import { PageContainer } from "../ui/PageContainer";
 import { ProfileForm } from "../features/Profile/ProfileForm";
 import dummyImage from "../assets/avatar2.png";

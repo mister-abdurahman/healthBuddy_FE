@@ -1,10 +1,7 @@
-import React, { useState } from "react";
-import { IoExit, IoMenu, IoNotificationsSharp } from "react-icons/io5";
-import { BiSolidExit } from "react-icons/bi";
+import { useState } from "react";
+import { IoNotificationsSharp } from "react-icons/io5";
 import demoImage from "../assets/avatar2.png";
-import { FaHamburger } from "react-icons/fa";
-import { useAppContext } from "../context/AppContext";
-import { IoMdRemove } from "react-icons/io";
+import { useAppContext } from "../hooks/useAppContext";
 import CloseIcon from "@mui/icons-material/Close";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import { Badge } from "@mui/material";

@@ -1,6 +1,6 @@
 import { TextField } from "@mui/material";
 import { Button } from "../../ui/Button";
-import { useForm } from "react-hook-form";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { useUpdateUserMutation } from "../../Data/Api/ApiHandler";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Data/State/store";
@@ -40,57 +40,59 @@ export const ProfileForm = () => {
   });
 
   function handlePhoneNumber(e: Event) {
-    setError("phoneNumber", "");
+    // setError("phoneNumber", null);
     const target = e.target as HTMLFormElement;
     if (target.value.length !== 11) {
       setError("phoneNumber", {
         type: "custom",
         message: "Phone number must be 11 digits !",
       });
-      setValue("phoneNumber", "");
+      setValue("phoneNumber", null);
     }
   }
 
-  async function submitForm(data: IPatientForm) {
-    const res = await updateUser({ id: user._id, data });
-    if (res?.error?.data?.hasError)
-      return setToast(true, res?.error?.data?.message, "error");
+  const submitForm: SubmitHandler<FieldValues> = async (data) => {
+    try {
+      await updateUser({ id: user._id, data });
 
-    localStorage.setItem(
-      "userData",
-      JSON.stringify({
-        _id: user._id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        phoneNumber: data.phoneNumber,
-        profilePicture: data.profilePicture,
-        facebookHandle: data.facebookHandle,
-        twitterHandle: data.twitterHandle,
-        linkedInHandle: data.linkedInHandle,
-        address: data.address,
-        state: data.state,
-        walletId: user.walletId,
-      })
-    );
+      localStorage.setItem(
+        "userData",
+        JSON.stringify({
+          _id: user._id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          phoneNumber: data.phoneNumber,
+          profilePicture: data.profilePicture,
+          facebookHandle: data.facebookHandle,
+          twitterHandle: data.twitterHandle,
+          linkedInHandle: data.linkedInHandle,
+          address: data.address,
+          state: data.state,
+          walletId: user.walletId,
+        })
+      );
 
-    dispatch(
-      getInfo({
-        _id: user._id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        phoneNumber: data.phoneNumber,
-        profilePicture: data.profilePicture,
-        facebookHandle: data.facebookHandle,
-        twitterHandle: data.twitterHandle,
-        linkedInHandle: data.linkedInHandle,
-        address: data.address,
-        state: data.state,
-        walletId: user.walletId,
-      })
-    );
-    setToast(true, "User details Updated", "success");
+      dispatch(
+        getInfo({
+          _id: user._id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          phoneNumber: data.phoneNumber,
+          profilePicture: data.profilePicture,
+          facebookHandle: data.facebookHandle,
+          twitterHandle: data.twitterHandle,
+          linkedInHandle: data.linkedInHandle,
+          address: data.address,
+          state: data.state,
+          walletId: user.walletId,
+        })
+      );
+      setToast(true, "User details Updated", "success");
+    } catch (error) {
+      if (error) return setToast(true, "Error updating details", "error");
+    }
 
     //
     // updateUser({ id: user._id, data }).then((res: any) => {
@@ -134,7 +136,7 @@ export const ProfileForm = () => {
     //   setToast(true, "User details Updated", "success");
     //   // alert("User details Updated");
     // });
-  }
+  };
 
   return (
     <form

@@ -6,7 +6,7 @@ import { RootState } from "../Data/State/store";
 import { FaPlus } from "react-icons/fa";
 import { Spinner } from "../ui/Spinner";
 import { ErrorComp } from "../ui/ErrorComp";
-import { IAppointment } from "../../Data/Interfaces";
+import { IAppointment } from "../Data/Interfaces";
 
 const column = ["Date", "Doctor", "Status"];
 

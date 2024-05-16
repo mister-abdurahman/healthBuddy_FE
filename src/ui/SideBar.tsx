@@ -1,8 +1,7 @@
-import React from "react";
 import demoImage from "../assets/logo.jpg";
 import { SideMenuConfig } from "../config/SideMenuConfig";
-import { NavLink, useNavigate } from "react-router-dom";
-import { useAppContext } from "../context/AppContext";
+import { NavLink } from "react-router-dom";
+import { useAppContext } from "../hooks/useAppContext";
 
 export const SideBar = () => {
   const { openHamburger, closeHamburger } = useAppContext();

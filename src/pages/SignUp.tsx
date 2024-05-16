@@ -79,7 +79,7 @@ export default function SignUp() {
       setToast(true, "User Registered successfully", "success", () =>
         navigate("/signin")
       );
-    } catch (error: Error) {
+    } catch (error: any) {
       if (error?.data?.hasError || registeringError)
         return setToast(true, error?.data?.message, "error");
     } finally {

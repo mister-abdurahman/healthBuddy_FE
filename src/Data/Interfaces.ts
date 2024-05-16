@@ -1,4 +1,5 @@
 export interface IAppointment {
+  _id?: string;
   userId: string;
   date: Date | string;
   time: string;
@@ -33,4 +34,11 @@ export interface INews {
   date: string;
   link: string;
   image: string;
+}
+
+export interface ITransactions {
+  walletId: string;
+  amount: number;
+  type: string;
+  date: string;
 }

@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { PageContainer } from "../ui/PageContainer";
 import { Card } from "../ui/Card";
 import { MdAddBox } from "react-icons/md";
-import { FaFilter } from "react-icons/fa";
-import { FaArrowTrendDown, FaArrowTrendUp } from "react-icons/fa6";
+import { FaArrowTrendUp } from "react-icons/fa6";
 import { IoFilter } from "react-icons/io5";
 import {
   useGetTransactionsByWalletIdQuery,
@@ -16,11 +15,11 @@ import dayjs from "dayjs";
 import PaymentModal from "../ui/PaymentModal";
 import { Dropdown } from "@mui/base/Dropdown";
 import { MenuButton as BaseMenuButton } from "@mui/base/MenuButton";
-import { MenuItem as BaseMenuItem, menuItemClasses } from "@mui/base/MenuItem";
-import { Menu, MenuListboxSlotProps } from "@mui/base/Menu";
+import { Menu } from "@mui/base/Menu";
 import { MenuItem } from "@mui/material";
 import { Spinner } from "../ui/Spinner";
 import { ErrorComp } from "../ui/ErrorComp";
+import { ITransactions } from "../Data/Interfaces";
 
 export const Wallet = () => {
   const [open, setOpen] = useState(false);
@@ -58,13 +57,17 @@ export const Wallet = () => {
     setFilteredTransactions(transactions.data);
   }
   function filterByType(type: string) {
-    setFilteredTransactions(transactions.data.filter((el) => el.type === type));
+    setFilteredTransactions(
+      transactions.data.filter((el: { type: string }) => el.type === type)
+    );
   }
   function filterByDate(days: number) {
     const sevenDaysAgo = new Date(today);
     sevenDaysAgo.setDate(today.getDate() - days);
     setFilteredTransactions(
-      transactions.data.filter((el) => new Date(el.date) >= sevenDaysAgo)
+      transactions.data.filter(
+        (el: { date: string }) => new Date(el.date) >= sevenDaysAgo
+      )
     );
   }
 
@@ -125,7 +128,7 @@ export const Wallet = () => {
           </Dropdown>
         </div>
         <ul className="divide-y-2 divide-secondary_light max-h-screen overflow-scroll styled-scrollbar">
-          {filteredTransactions?.map((el, i) => (
+          {filteredTransactions?.map((el: ITransactions, i: number) => (
             <li
               key={i}
               className="flex items-center justify-between my-1 py-2 font-bold"

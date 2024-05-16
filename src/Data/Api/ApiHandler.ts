@@ -1,7 +1,8 @@
 // import axios, { AxiosResponse } from "axios";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { RootState } from "../State/store";
-import { logOut, signIn } from "../State/AuthSlice";
+import { logOut } from "../State/AuthSlice";
+import { AnyAction, Dispatch, MiddlewareAPI } from "@reduxjs/toolkit";
 
 const version = "1";
 
@@ -41,7 +42,7 @@ export const CoreApi = createApi({
       providesTags: ["notification"],
     }),
     getAppointmentsById: builder.query({
-      query: (id: string | null | undefined): any => {
+      query: (id: string | null | undefined): string => {
         if (!id) id = "skip";
         // if (!id) return null;
         return `/appointment/${id}`;
@@ -123,16 +124,21 @@ export const {
   //   useCreateIndividualPatientMutation,
 } = CoreApi;
 
-export const checkValidToken = (store) => (next) => (action) => {
-  // Call the next middleware in the chain
-  const result = next(action);
+// type StoreType = Store<StateType, ActionType>;
 
-  if (result?.payload?.data?.error === "jwt expired") {
-    store.dispatch(logOut());
-  }
+export const checkValidToken =
+  (store: MiddlewareAPI) =>
+  (next: Dispatch<AnyAction>) =>
+  (action: AnyAction) => {
+    // Call the next middleware in the chain
+    const result = next(action);
 
-  return result;
-};
+    if (result?.payload?.data?.error === "jwt expired") {
+      store.dispatch(logOut());
+    }
+
+    return result;
+  };
 
 export const AuthApi = createApi({
   reducerPath: "login",

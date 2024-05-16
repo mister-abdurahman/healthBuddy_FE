@@ -41,12 +41,15 @@ export const Appointment = () => {
     useDeleteAppointmentMutation();
 
   async function handleDelete() {
-    const res = await deleteAppointment(id);
-    if (res?.error?.data?.hasError)
-      return setToast(true, res?.error?.data?.message, "error");
-    setToast(true, "Appointment Successfully deleted", "success", () =>
-      navigate("/appointments")
-    );
+    try {
+      await deleteAppointment(id);
+      setToast(true, "Appointment Successfully deleted", "success", () =>
+        navigate("/appointments")
+      );
+    } catch (error) {
+      if (error) setToast(true, "Error deleting appointment", "error");
+      // if(error) setToast(true, error?.data?.message, "error");
+    }
 
     // deleteAppointment(id).then((res: any) => {
     //   // if (res?.data?.data?.hasError) return alert(res.data.data.message);

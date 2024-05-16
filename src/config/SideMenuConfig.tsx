@@ -1,4 +1,3 @@
-import React from "react";
 import { BiSolidNotification } from "react-icons/bi";
 import { FaUser } from "react-icons/fa";
 import { IoCalendar, IoNewspaper, IoWallet } from "react-icons/io5";

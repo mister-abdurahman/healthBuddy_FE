@@ -1,6 +1,6 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useState } from "react";
 
-const AppContext = createContext<{
+export const AppContext = createContext<{
   signedIn?: boolean;
   signInOut?: () => void;
   openHamburger?: boolean;
@@ -37,12 +37,12 @@ const AppProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-function useAppContext() {
-  const context = useContext(AppContext);
-  // if (context === "undefined") throw new Error("error");
-  if (!context) throw new Error("error in app context");
+// function useAppContext() {
+//   const context = useContext(AppContext);
+//   // if (context === "undefined") throw new Error("error");
+//   if (!context) throw new Error("error in app context");
 
-  return context;
-}
+//   return context;
+// }
 
-export { AppProvider, useAppContext };
+export { AppProvider };

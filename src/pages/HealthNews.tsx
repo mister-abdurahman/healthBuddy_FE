@@ -3,7 +3,7 @@ import { useGetNewsQuery } from "../Data/Api/ApiHandler";
 import { NewsCard } from "../features/News/NewsCard";
 import { Spinner } from "../ui/Spinner";
 import { ErrorComp } from "../ui/ErrorComp";
-import { INews } from "../../Data/Interfaces";
+import { INews } from "../Data/Interfaces";
 
 export const HealthNews = () => {
   const {

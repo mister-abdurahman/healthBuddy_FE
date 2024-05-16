@@ -26,7 +26,7 @@ import { Spinner } from "../../ui/Spinner";
 import { ErrorComp } from "../../ui/ErrorComp";
 import CustomizedSnackbar from "../../ui/SnackBar";
 import { useToast } from "../../hooks/useToast";
-import { IAppointment, IAppointmentForm } from "../../Data/Interfaces";
+import { IAppointmentForm } from "../../Data/Interfaces";
 
 const schema = yup.object().shape({
   date: yup.string().required(),
@@ -84,7 +84,7 @@ export const AppointmentForm = ({
   const today = new Date();
   const handleInputDateChange = (e: Event) => {
     // setDateInputErr("");
-    setError("date", "");
+    setError("date", { type: "manual", message: "" });
     const target = e.target as HTMLFormElement;
     const selectedDate = new Date(target.value);
     if (today > selectedDate && today.getDate() !== selectedDate.getDate()) {
@@ -98,7 +98,7 @@ export const AppointmentForm = ({
   };
 
   const handleInputTimeChange = (e: Event) => {
-    setError("time", "");
+    setError("time", { type: "manual", message: "" });
     const target = e.target as HTMLFormElement;
     const hr = +target?.value.split(":")[0];
     // const hr = +e?.target?.value.split(":")[0];
@@ -121,7 +121,7 @@ export const AppointmentForm = ({
   if (doctors?.hasError || doctorsError)
     return <ErrorComp message={"error occured while fetching doctor"} />;
 
-  function submitForm(data: IAppointment) {
+  function submitForm(data: IAppointmentForm) {
     // console.log(data);
     const selectedDoc = doctors.data.find(
       (el: { _id: string }) => el._id === data.doctor
@@ -142,25 +142,29 @@ export const AppointmentForm = ({
 
     appointmentId
       ? async (): Promise<void> => {
-          const res = await updateAppointment({
-            id: appointmentId,
-            appointment: toSubmit,
-          });
-          if (res?.error?.data?.hasError)
-            return setToast(true, res?.error?.data?.message, "error");
-          else
+          try {
+            await updateAppointment({
+              id: appointmentId,
+              appointment: toSubmit,
+            });
             setToast(true, "Appointment Updated Successfully", "success", () =>
               navigate("/appointments")
             );
+          } catch (error) {
+            if (error)
+              return setToast(true, "Error updating appointment", "error");
+          }
         }
       : async (): Promise<void> => {
-          const res = await createAppointment(toSubmit);
-          if (res?.error?.data?.hasError)
-            return setToast(true, res?.error?.data?.message, "error");
-          else
+          try {
+            await createAppointment(toSubmit);
             setToast(true, "Appointment Created Successfully", "success", () =>
               navigate("/appointments")
             );
+          } catch (error) {
+            if (error)
+              return setToast(true, "Error creating appointment", "error");
+          }
         };
 
     // previous:

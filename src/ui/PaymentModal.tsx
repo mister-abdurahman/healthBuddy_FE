@@ -4,7 +4,7 @@ import { Button } from "./Button";
 import { InputAdornment, TextField } from "@mui/material";
 import { MdCancelPresentation } from "react-icons/md";
 import * as yup from "yup";
-import { useForm } from "react-hook-form";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useCreateTransactionMutation } from "../Data/Api/ApiHandler";
 import { SpinnerMini } from "./SpinnerMini";
@@ -71,7 +71,7 @@ export default function PaymentModal({ open, handleClose, walletId }: Iprops) {
         reset();
         handleClose();
       });
-    } catch (error: Error) {
+    } catch (error: any) {
       if (error?.data?.hasError || errorCreatingTransaction)
         return setToast(true, error?.data?.message, "error");
     }
