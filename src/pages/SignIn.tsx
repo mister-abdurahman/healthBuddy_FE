@@ -206,6 +206,16 @@ export default function SignIn() {
         <Typography component="h1" variant="h5">
           Sign In
         </Typography>
+        <span className="text-xs -mb-4 mt-3">
+          Email:{" "}
+          <span className="bg-primary text-white font-semibold rounded-full px-2">
+            abdullah123@gmail.com
+          </span>{" "}
+          Password:{" "}
+          <span className="bg-primary text-white font-semibold rounded-full px-2">
+            abdullah123
+          </span>{" "}
+        </span>
         <Box
           component="form"
           noValidate
