@@ -1,4 +1,3 @@
-import React from "react";
 import { AppointmentForm } from "../features/Appointment/AppointmentForm";
 import { PageContainer } from "../ui/PageContainer";
 import { useLocation } from "react-router-dom";

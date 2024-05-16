@@ -122,7 +122,9 @@ export const AppointmentForm = ({
 
   function submitForm(data) {
     // console.log(data);
-    const selectedDoc = doctors.data.find((el) => el._id === data.doctor);
+    const selectedDoc = doctors.data.find(
+      (el: { _id: string }) => el._id === data.doctor
+    );
     const toSubmit = {
       userId,
       date: data.date,
@@ -151,7 +153,7 @@ export const AppointmentForm = ({
               );
           }
         )
-      : createAppointment(toSubmit).then((res) => {
+      : createAppointment(toSubmit).then((res: any) => {
           if (res?.error?.data?.hasError)
             return setToast(true, res?.error?.data?.message, "error");
           else
@@ -221,11 +223,18 @@ export const AppointmentForm = ({
           {...register("doctor")}
         >
           {/* <MenuItem value={"111"}>--test Doctor--</MenuItem> */}
-          {doctors?.data?.map((option) => (
-            <MenuItem key={option._id} value={option._id}>
-              {option.title} {option.lastName} {option.firstName}
-            </MenuItem>
-          ))}
+          {doctors?.data?.map(
+            (option: {
+              _id: string;
+              title: string;
+              lastName: string;
+              firstName: string;
+            }) => (
+              <MenuItem key={option._id} value={option._id}>
+                {option.title} {option.lastName} {option.firstName}
+              </MenuItem>
+            )
+          )}
         </Select>
       </FormControl>
 
