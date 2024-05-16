@@ -17,17 +17,16 @@ import { getToken, signIn } from "../Data/State/AuthSlice";
 import { useDispatch } from "react-redux";
 import { getInfo } from "../Data/State/UserSlice";
 import { SpinnerMini } from "../ui/SpinnerMini";
-import { useState } from "react";
 import CustomizedSnackbar from "../ui/SnackBar";
 import { useToast } from "../hooks/useToast";
 
-function Copyright(props: any) {
+function Copyright() {
   return (
     <Typography
       variant="body2"
       color="text.secondary"
       align="center"
-      {...props}
+      sx={{ mt: 5 }}
     >
       {"Copyright © "}
       <Link color="inherit">Health Buddy</Link> {new Date().getFullYear()}
@@ -179,7 +178,7 @@ export default function SignIn() {
       );
       // console.log("fulfilled", payload);
       setToast(true, "Log in Successfull", "success", () => navigate("/"));
-    } catch (error: unknown) {
+    } catch (error: Error) {
       // console.error("rejected", error);
       setToast(true, error.data.message, "error");
       // setOpenSnackbar(true);
@@ -292,7 +291,7 @@ export default function SignIn() {
           </Grid>
         </Box>
       </Box>
-      <Copyright sx={{ mt: 5 }} />
+      <Copyright />
       <CustomizedSnackbar
         open={openSnackbar}
         close={!openSnackbar}

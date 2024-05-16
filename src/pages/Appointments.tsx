@@ -6,6 +6,7 @@ import { RootState } from "../Data/State/store";
 import { FaPlus } from "react-icons/fa";
 import { Spinner } from "../ui/Spinner";
 import { ErrorComp } from "../ui/ErrorComp";
+import { IAppointment } from "../../Data/Interfaces";
 
 const column = ["Date", "Doctor", "Status"];
 
@@ -23,7 +24,7 @@ export const Appointments = () => {
   if (appointments?.hasError || appointmentsError)
     return <ErrorComp message={appointments.message} />;
 
-  const tableRow = appointments?.data?.map((el) => {
+  const tableRow = appointments?.data?.map((el: IAppointment) => {
     return {
       id: el._id,
       date: new Intl.DateTimeFormat(["ban", "id"]).format(new Date(el.date)),

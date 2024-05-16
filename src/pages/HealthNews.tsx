@@ -3,6 +3,7 @@ import { useGetNewsQuery } from "../Data/Api/ApiHandler";
 import { NewsCard } from "../features/News/NewsCard";
 import { Spinner } from "../ui/Spinner";
 import { ErrorComp } from "../ui/ErrorComp";
+import { INews } from "../../Data/Interfaces";
 
 export const HealthNews = () => {
   const {
@@ -17,7 +18,7 @@ export const HealthNews = () => {
   return (
     <PageContainer title="HealthNews">
       <div className="flex gap-4 flex-wrap justify-center">
-        {news.data.map((el, i) => (
+        {news.data.map((el: INews, i: number) => (
           <NewsCard key={i} news={el} />
         ))}
       </div>

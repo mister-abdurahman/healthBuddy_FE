@@ -35,17 +35,23 @@ export const Notifications = () => {
   if (notifications?.hasError || notificationError)
     return <ErrorComp message={notifications?.message} />;
 
-  function handleUpdateNotification(id: string) {
+  async function handleUpdateNotification(id: string) {
     const update = {
       read: true,
     };
-    updateNotification({ id, notification: update }).then((res: any) => {
-      if (res?.hasError)
-        return setToast(true, res?.error?.data?.message, "error");
-      // if (res?.hasError) return alert(res?.message);
-      setToast(true, "Notification marked as read", "success");
-      // alert("Notification marked as read");
-    });
+
+    const res = await updateNotification({ id, notification: update });
+    if (res?.hasError)
+      return setToast(true, res?.error?.data?.message, "error");
+    setToast(true, "Notification marked as read", "success");
+
+    // updateNotification({ id, notification: update }).then((res: any) => {
+    //   if (res?.hasError)
+    //     return setToast(true, res?.error?.data?.message, "error");
+    //   // if (res?.hasError) return alert(res?.message);
+    //   setToast(true, "Notification marked as read", "success");
+    //   // alert("Notification marked as read");
+    // });
   }
 
   return (

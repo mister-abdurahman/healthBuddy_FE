@@ -57,24 +57,36 @@ export default function PaymentModal({ open, handleClose, walletId }: Iprops) {
     resolver: yupResolver(schema),
   });
 
-  function submitFn(data: any) {
+  async function submitFn(data): SubmitHandler<FieldValues> {
     const toSubmit = {
       walletId,
       amount: data.fund,
       type: "credit",
     };
     // console.log(toSubmit);
-    createTransaction(toSubmit).then((res) => {
-      // console.log(res);
-      if (res?.error?.data?.hasError || errorCreatingTransaction)
-        return setToast(true, res?.error?.data?.message, "error");
-      // if (res.data.hasError) return alert(res.data.message);
-      // alert("Transaction Successful !");
+
+    try {
+      await createTransaction(toSubmit);
       setToast(true, "Transaction Successful !", "success", () => {
         reset();
         handleClose();
       });
-    });
+    } catch (error: Error) {
+      if (error?.data?.hasError || errorCreatingTransaction)
+        return setToast(true, error?.data?.message, "error");
+    }
+
+    // createTransaction(toSubmit).then((res) => {
+    //   // console.log(res);
+    //   if (res?.error?.data?.hasError || errorCreatingTransaction)
+    //     return setToast(true, res?.error?.data?.message, "error");
+    //   // if (res.data.hasError) return alert(res.data.message);
+    //   // alert("Transaction Successful !");
+    //   setToast(true, "Transaction Successful !", "success", () => {
+    //     reset();
+    //     handleClose();
+    //   });
+    // });
   }
 
   return (

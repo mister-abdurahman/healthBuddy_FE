@@ -34,13 +34,13 @@ const schema = yup.object().shape({
   state: yup.string().required(),
 });
 
-function Copyright(props: any) {
+function Copyright() {
   return (
     <Typography
       variant="body2"
       color="text.secondary"
       align="center"
-      {...props}
+      sx={{ mt: 5 }}
     >
       {"Copyright © "}
       <Link color="inherit">Health Buddy</Link> {new Date().getFullYear()}
@@ -71,21 +71,32 @@ export default function SignUp() {
     reset,
   } = useForm({ resolver: yupResolver(schema) });
 
-  const submit: SubmitHandler<FieldValues> = (data) => {
-    console.log(data);
+  const submit: SubmitHandler<FieldValues> = async (data) => {
     // signInOut();
     // navigate("/dashboard");
-    registerUser(data).then((res) => {
-      if (res?.error?.data?.hasError || registeringError)
-        return setToast(true, res?.error?.data?.message, "error");
-      // return alert(res?.error?.data?.message || "error!");
-
+    try {
+      await registerUser(data);
       setToast(true, "User Registered successfully", "success", () =>
         navigate("/signin")
       );
-      // alert("User Registered successfully");
+    } catch (error: Error) {
+      if (error?.data?.hasError || registeringError)
+        return setToast(true, error?.data?.message, "error");
+    } finally {
       reset();
-    });
+    }
+
+    // registerUser(data).then((res) => {
+    //   if (res?.error?.data?.hasError || registeringError)
+    //     return setToast(true, res?.error?.data?.message, "error");
+    //   // return alert(res?.error?.data?.message || "error!");
+
+    //   setToast(true, "User Registered successfully", "success", () =>
+    //     navigate("/signin")
+    //   );
+    //   // alert("User Registered successfully");
+    //   reset();
+    // });
   };
 
   return (
@@ -274,7 +285,7 @@ export default function SignUp() {
           </Grid>
         </Box>
       </Box>
-      <Copyright sx={{ mt: 5 }} />
+      <Copyright />
       <CustomizedSnackbar
         open={openSnackbar}
         close={!openSnackbar}

@@ -8,6 +8,7 @@ import { SpinnerMini } from "../../ui/SpinnerMini";
 import { getInfo } from "../../Data/State/UserSlice";
 import { useToast } from "../../hooks/useToast";
 import CustomizedSnackbar from "../../ui/SnackBar";
+import { IProfileForm } from "../../Data/Interfaces";
 
 export const ProfileForm = () => {
   const {
@@ -26,7 +27,7 @@ export const ProfileForm = () => {
     formState: { errors },
     setError,
     setValue,
-  }: any = useForm({
+  } = useForm<IProfileForm>({
     defaultValues: {
       phoneNumber: user.phoneNumber || "",
       profilePicture: user.profilePicture || "q",
@@ -38,9 +39,10 @@ export const ProfileForm = () => {
     },
   });
 
-  function handlePhoneNumber(e) {
+  function handlePhoneNumber(e: Event) {
     setError("phoneNumber", "");
-    if (e.target.value.length !== 11) {
+    const target = e.target as HTMLFormElement;
+    if (target.value.length !== 11) {
       setError("phoneNumber", {
         type: "custom",
         message: "Phone number must be 11 digits !",
@@ -49,48 +51,89 @@ export const ProfileForm = () => {
     }
   }
 
-  function submitForm(data) {
-    updateUser({ id: user._id, data }).then((res: any) => {
-      if (res?.error?.data?.hasError)
-        return setToast(true, res?.error?.data?.message, "error");
-      // return alert(res?.error?.data?.message || "error!");
-      // if (res.hasError) return alert(res.message);
-      localStorage.setItem(
-        "userData",
-        JSON.stringify({
-          _id: user._id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          phoneNumber: data.phoneNumber,
-          profilePicture: data.profilePicture,
-          facebookHandle: data.facebookHandle,
-          twitterHandle: data.twitterHandle,
-          linkedInHandle: data.linkedInHandle,
-          address: data.address,
-          state: data.state,
-          walletId: user.walletId,
-        })
-      );
-      dispatch(
-        getInfo({
-          _id: user._id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          phoneNumber: data.phoneNumber,
-          profilePicture: data.profilePicture,
-          facebookHandle: data.facebookHandle,
-          twitterHandle: data.twitterHandle,
-          linkedInHandle: data.linkedInHandle,
-          address: data.address,
-          state: data.state,
-          walletId: user.walletId,
-        })
-      );
-      setToast(true, "User details Updated", "success");
-      // alert("User details Updated");
-    });
+  async function submitForm(data: IPatientForm) {
+    const res = await updateUser({ id: user._id, data });
+    if (res?.error?.data?.hasError)
+      return setToast(true, res?.error?.data?.message, "error");
+
+    localStorage.setItem(
+      "userData",
+      JSON.stringify({
+        _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        phoneNumber: data.phoneNumber,
+        profilePicture: data.profilePicture,
+        facebookHandle: data.facebookHandle,
+        twitterHandle: data.twitterHandle,
+        linkedInHandle: data.linkedInHandle,
+        address: data.address,
+        state: data.state,
+        walletId: user.walletId,
+      })
+    );
+
+    dispatch(
+      getInfo({
+        _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        phoneNumber: data.phoneNumber,
+        profilePicture: data.profilePicture,
+        facebookHandle: data.facebookHandle,
+        twitterHandle: data.twitterHandle,
+        linkedInHandle: data.linkedInHandle,
+        address: data.address,
+        state: data.state,
+        walletId: user.walletId,
+      })
+    );
+    setToast(true, "User details Updated", "success");
+
+    //
+    // updateUser({ id: user._id, data }).then((res: any) => {
+    //   if (res?.error?.data?.hasError)
+    //     return setToast(true, res?.error?.data?.message, "error");
+    //   // return alert(res?.error?.data?.message || "error!");
+    //   // if (res.hasError) return alert(res.message);
+    //   localStorage.setItem(
+    //     "userData",
+    //     JSON.stringify({
+    //       _id: user._id,
+    //       firstName: user.firstName,
+    //       lastName: user.lastName,
+    //       email: user.email,
+    //       phoneNumber: data.phoneNumber,
+    //       profilePicture: data.profilePicture,
+    //       facebookHandle: data.facebookHandle,
+    //       twitterHandle: data.twitterHandle,
+    //       linkedInHandle: data.linkedInHandle,
+    //       address: data.address,
+    //       state: data.state,
+    //       walletId: user.walletId,
+    //     })
+    //   );
+    //   dispatch(
+    //     getInfo({
+    //       _id: user._id,
+    //       firstName: user.firstName,
+    //       lastName: user.lastName,
+    //       email: user.email,
+    //       phoneNumber: data.phoneNumber,
+    //       profilePicture: data.profilePicture,
+    //       facebookHandle: data.facebookHandle,
+    //       twitterHandle: data.twitterHandle,
+    //       linkedInHandle: data.linkedInHandle,
+    //       address: data.address,
+    //       state: data.state,
+    //       walletId: user.walletId,
+    //     })
+    //   );
+    //   setToast(true, "User details Updated", "success");
+    //   // alert("User details Updated");
+    // });
   }
 
   return (

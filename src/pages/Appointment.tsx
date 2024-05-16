@@ -40,16 +40,21 @@ export const Appointment = () => {
   const [deleteAppointment, { isLoading: deletingAppointment }] =
     useDeleteAppointmentMutation();
 
-  function handleDelete() {
-    deleteAppointment(id).then((res: any) => {
-      if (res?.error?.data?.hasError)
-        return setToast(true, res?.error?.data?.message, "error");
-      // if (res?.data?.data?.hasError) return alert(res.data.data.message);
-      setToast(true, "Appointment Successfully deleted", "success", () =>
-        navigate("/appointments")
-      );
-      // alert("Appointment Successfully deleted");
-    });
+  async function handleDelete() {
+    const res = await deleteAppointment(id);
+    if (res?.error?.data?.hasError)
+      return setToast(true, res?.error?.data?.message, "error");
+    setToast(true, "Appointment Successfully deleted", "success", () =>
+      navigate("/appointments")
+    );
+
+    // deleteAppointment(id).then((res: any) => {
+    //   // if (res?.data?.data?.hasError) return alert(res.data.data.message);
+    //   setToast(true, "Appointment Successfully deleted", "success", () =>
+    //     navigate("/appointments")
+    //   );
+    //   // alert("Appointment Successfully deleted");
+    // });
   }
 
   if (loadingAppointment) return <Spinner />;

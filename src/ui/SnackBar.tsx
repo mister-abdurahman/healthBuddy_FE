@@ -1,7 +1,13 @@
-import * as React from "react";
-import Button from "@mui/material/Button";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
+
+interface IProps {
+  open: boolean;
+  close: string;
+  handleClose: () => void;
+  severity: string;
+  message: string;
+}
 
 export default function CustomizedSnackbar({
   open,
@@ -9,7 +15,7 @@ export default function CustomizedSnackbar({
   handleClose,
   severity,
   message,
-}) {
+}: IProps) {
   //   const [open, setOpen] = React.useState(false);
 
   //   const handleClick = () => {
@@ -23,6 +29,7 @@ export default function CustomizedSnackbar({
 
   //     setOpen(false);
   //   };
+  console.log(close);
 
   return (
     <div>
