@@ -12,6 +12,8 @@ import { RootState } from "../Data/State/store";
 import { useGetNotificationsByUserIdQuery } from "../Data/Api/ApiHandler";
 import { useNavigate } from "react-router-dom";
 import ConfirmModal from "./ConfirmModal";
+import { Spinner } from "./Spinner";
+import { ErrorComp } from "./ErrorComp";
 
 export const Header = () => {
   const [open, setOpen] = useState(false);
@@ -39,6 +41,10 @@ export const Header = () => {
   if (loadingNotifications) return <p>Loading...</p>;
   if (notifications?.hasError || notificationError)
     return <p>Error fetching notifications...</p>;
+
+  if (loadingNotifications) return <Spinner />;
+  if (notifications?.hasError || notificationError)
+    return <ErrorComp message={notifications.message} />;
 
   const unread = notifications.data.filter((el: { read: string }) => !el.read);
 

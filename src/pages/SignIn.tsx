@@ -179,9 +179,8 @@ export default function SignIn() {
       // console.log("fulfilled", payload);
       setToast(true, "Log in Successfull", "success", () => navigate("/"));
     } catch (error: any) {
-      // console.error("rejected", error);
-      // if(error) setToast(true, error?.data?.message, "error");
-      if (error) setToast(true, error?.data?.message, "error");
+      // if(error) setToast(true, error?.data?.message, "error"); //correct format
+      setToast(true, error?.data?.message, "error");
       // setOpenSnackbar(true);
       // setSnackbarMessage(error.data.message);
       // setSnackbarSeverity("error");

@@ -13,7 +13,6 @@ const column = ["Date", "Doctor", "Status"];
 export const Appointments = () => {
   const navigate = useNavigate();
   const userId = useSelector((state: RootState) => state.user.userDetails._id);
-  console.log(userId);
   const {
     data: appointments,
     isLoading: loadingAppointments,

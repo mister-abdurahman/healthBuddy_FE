@@ -8,8 +8,6 @@ export const ProtectedRoute = ({ children }: { children: ReactNode }) => {
   // const user = useSelector((state: RootState) => state.user.userDetails);
   const signedIn = useSelector((state: RootState) => state.auth.isSignIn);
 
-  console.log(signedIn);
-
   useEffect(
     function () {
       if (!signedIn) navigate("/signin");

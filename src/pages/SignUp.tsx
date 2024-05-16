@@ -60,10 +60,8 @@ export default function SignUp() {
     closeToast,
   } = useToast();
 
-  const [
-    registerUser,
-    { isLoading: registeringUser, isError: registeringError },
-  ] = useRegisterUserMutation();
+  const [registerUser, { isLoading: registeringUser }] =
+    useRegisterUserMutation();
   const {
     register,
     handleSubmit,
@@ -80,8 +78,7 @@ export default function SignUp() {
         navigate("/signin")
       );
     } catch (error: any) {
-      if (error?.data?.hasError || registeringError)
-        return setToast(true, error?.data?.message, "error");
+      setToast(true, error?.data?.message, "error");
     } finally {
       reset();
     }

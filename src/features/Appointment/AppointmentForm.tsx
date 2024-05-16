@@ -121,7 +121,7 @@ export const AppointmentForm = ({
   if (doctors?.hasError || doctorsError)
     return <ErrorComp message={"error occured while fetching doctor"} />;
 
-  function submitForm(data: IAppointmentForm) {
+  async function submitForm(data: IAppointmentForm) {
     // console.log(data);
     const selectedDoc = doctors.data.find(
       (el: { _id: string }) => el._id === data.doctor
@@ -139,33 +139,28 @@ export const AppointmentForm = ({
         " " +
         selectedDoc.firstName,
     };
-
-    appointmentId
-      ? async (): Promise<void> => {
-          try {
-            await updateAppointment({
-              id: appointmentId,
-              appointment: toSubmit,
-            });
-            setToast(true, "Appointment Updated Successfully", "success", () =>
-              navigate("/appointments")
-            );
-          } catch (error) {
-            if (error)
-              return setToast(true, "Error updating appointment", "error");
-          }
-        }
-      : async (): Promise<void> => {
-          try {
-            await createAppointment(toSubmit);
-            setToast(true, "Appointment Created Successfully", "success", () =>
-              navigate("/appointments")
-            );
-          } catch (error) {
-            if (error)
-              return setToast(true, "Error creating appointment", "error");
-          }
-        };
+    if (appointmentId) {
+      try {
+        await updateAppointment({
+          id: appointmentId,
+          appointment: toSubmit,
+        });
+        setToast(true, "Appointment Updated Successfully", "success", () =>
+          navigate("/appointments")
+        );
+      } catch (error) {
+        return setToast(true, "Error updating appointment", "error");
+      }
+    } else {
+      try {
+        await createAppointment(toSubmit);
+        setToast(true, "Appointment Created Successfully", "success", () =>
+          navigate("/appointments")
+        );
+      } catch (error) {
+        return setToast(true, "Error creating appointment", "error");
+      }
+    }
 
     // previous:
     // appointmentId
