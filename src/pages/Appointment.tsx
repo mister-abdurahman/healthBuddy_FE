@@ -12,11 +12,22 @@ import ConfirmModal from "../ui/ConfirmModal";
 import dayjs from "dayjs";
 import { Spinner } from "../ui/Spinner";
 import { ErrorComp } from "../ui/ErrorComp";
+import CustomizedSnackbar from "../ui/SnackBar";
+import { useToast } from "../hooks/useToast";
+import { SpinnerMini } from "../ui/SpinnerMini";
 
 export const Appointment = () => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const {
+    openSnackbar,
+    snackbarMessage,
+    snackbarSeverity,
+    setToast,
+    closeToast,
+  } = useToast();
 
   const navigate = useNavigate();
   const { id } = useParams();
@@ -30,10 +41,14 @@ export const Appointment = () => {
     useDeleteAppointmentMutation();
 
   function handleDelete() {
-    deleteAppointment(id).then((res) => {
-      if (res?.data?.data?.hasError) return alert(res.data.data.message);
-      alert("Appointment Successfully deleted");
-      navigate("/appointments");
+    deleteAppointment(id).then((res: any) => {
+      if (res?.error?.data?.hasError)
+        return setToast(true, res?.error?.data?.message, "error");
+      // if (res?.data?.data?.hasError) return alert(res.data.data.message);
+      setToast(true, "Appointment Successfully deleted", "success", () =>
+        navigate("/appointments")
+      );
+      // alert("Appointment Successfully deleted");
     });
   }
 
@@ -65,7 +80,7 @@ export const Appointment = () => {
             <span>{appointment?.data?.completed ? "Done" : "Pending"}</span>
           </div>
           <div>
-            {appointment.data.completed && (
+            {appointment?.data?.completed && (
               <div className="flex gap-6">
                 <h4>Note: </h4>
                 <span>{appointment?.data?.doctorNote}</span>
@@ -73,7 +88,7 @@ export const Appointment = () => {
             )}
           </div>
           {/* vitals show on condition */}
-          {appointment.data.completed && (
+          {appointment?.data?.completed && (
             <div className="bg-green-200 mt-8 rounded-md p-2">
               <p>Vitals:</p>
               <div className="flex gap-6">
@@ -107,7 +122,7 @@ export const Appointment = () => {
             Edit
           </Button>
           <Button onClick={() => handleOpen()} style="w-full mt-7">
-            Delete
+            {deletingAppointment ? <SpinnerMini /> : "Delete"}
           </Button>
         </div>
       )}
@@ -118,6 +133,13 @@ export const Appointment = () => {
         title={"Are you sure?"}
         body={"Note: Action cannot be reversed!"}
         action={handleDelete}
+      />
+      <CustomizedSnackbar
+        open={openSnackbar}
+        close={!openSnackbar}
+        message={snackbarMessage}
+        handleClose={closeToast}
+        severity={snackbarSeverity}
       />
     </PageContainer>
   );

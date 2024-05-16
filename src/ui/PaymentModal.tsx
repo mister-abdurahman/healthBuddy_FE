@@ -8,6 +8,8 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useCreateTransactionMutation } from "../Data/Api/ApiHandler";
 import { SpinnerMini } from "./SpinnerMini";
+import { useToast } from "../hooks/useToast";
+import CustomizedSnackbar from "./SnackBar";
 
 const style = {
   position: "absolute",
@@ -33,6 +35,14 @@ const schema = yup.object().shape({
 });
 
 export default function PaymentModal({ open, handleClose, walletId }: Iprops) {
+  const {
+    openSnackbar,
+    snackbarMessage,
+    snackbarSeverity,
+    setToast,
+    closeToast,
+  } = useToast();
+
   const [
     createTransaction,
     { isLoading: creatingTransaction, isError: errorCreatingTransaction },
@@ -53,14 +63,18 @@ export default function PaymentModal({ open, handleClose, walletId }: Iprops) {
       amount: data.fund,
       type: "credit",
     };
-    console.log(toSubmit);
+    // console.log(toSubmit);
     createTransaction(toSubmit).then((res) => {
-      console.log(res);
-      if (res.data.hasError) return alert(res.data.message);
-      alert("Transaction Successful !");
+      // console.log(res);
+      if (res?.error?.data?.hasError || errorCreatingTransaction)
+        return setToast(true, res?.error?.data?.message, "error");
+      // if (res.data.hasError) return alert(res.data.message);
+      // alert("Transaction Successful !");
+      setToast(true, "Transaction Successful !", "success", () => {
+        reset();
+        handleClose();
+      });
     });
-    reset();
-    handleClose();
   }
 
   return (
@@ -111,6 +125,13 @@ export default function PaymentModal({ open, handleClose, walletId }: Iprops) {
           </form>
         </Box>
       </Modal>
+      <CustomizedSnackbar
+        open={openSnackbar}
+        close={!openSnackbar}
+        message={snackbarMessage}
+        handleClose={closeToast}
+        severity={snackbarSeverity}
+      />
     </div>
   );
 }

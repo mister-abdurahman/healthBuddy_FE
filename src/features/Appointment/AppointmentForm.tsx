@@ -24,6 +24,8 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Spinner } from "../../ui/Spinner";
 import { ErrorComp } from "../../ui/ErrorComp";
+import CustomizedSnackbar from "../../ui/SnackBar";
+import { useToast } from "../../hooks/useToast";
 
 const schema = yup.object().shape({
   date: yup.string().required(),
@@ -38,6 +40,13 @@ export const AppointmentForm = ({
   appointmentId?: string | null;
 }) => {
   const navigate = useNavigate();
+  const {
+    openSnackbar,
+    snackbarMessage,
+    snackbarSeverity,
+    setToast,
+    closeToast,
+  } = useToast();
   const userId = useSelector((state: RootState) => state.user.userDetails._id);
   const {
     data: appointment,
@@ -72,10 +81,11 @@ export const AppointmentForm = ({
     },
   });
   const today = new Date();
-  const handleInputDateChange = (e) => {
+  const handleInputDateChange = (e: Event) => {
     // setDateInputErr("");
     setError("date", "");
-    const selectedDate = new Date(e.target.value);
+    const target = e.target as HTMLFormElement;
+    const selectedDate = new Date(target.value);
     if (today > selectedDate && today.getDate() !== selectedDate.getDate()) {
       setError("date", {
         type: "custom",
@@ -86,10 +96,11 @@ export const AppointmentForm = ({
     }
   };
 
-  const handleInputTimeChange = (e) => {
+  const handleInputTimeChange = (e: Event) => {
     setError("time", "");
-    const hr = +e.target.value.split(":")[0];
-    console.log(hr);
+    const target = e.target as HTMLFormElement;
+    const hr = +target?.value.split(":")[0];
+    // const hr = +e?.target?.value.split(":")[0];
     // const selectedDate = new Date(e.target.value);
     if (hr < 8 || hr > 17) {
       setError("time", {
@@ -101,8 +112,8 @@ export const AppointmentForm = ({
     }
   };
 
-  if (appointmentId && loadingAppointment) return <Spinner />
-  if (appointmentId && loadingDoctors) return <Spinner />
+  if (appointmentId && loadingAppointment) return <Spinner />;
+  if (appointmentId && loadingDoctors) return <Spinner />;
 
   if (appointment?.hasError || appointmentError)
     return <ErrorComp message={"error occured while fetching appointment"} />;
@@ -125,20 +136,28 @@ export const AppointmentForm = ({
         " " +
         selectedDoc.firstName,
     };
-    console.log(toSubmit);
     appointmentId
       ? updateAppointment({ id: appointmentId, appointment: toSubmit }).then(
-          () => {
-            alert("Updated Successfully");
-            navigate("/appointments");
+          (res: any) => {
+            // alert("Updated Successfully");
+            if (res?.error?.data?.hasError)
+              return setToast(true, res?.error?.data?.message, "error");
+            else
+              setToast(
+                true,
+                "Appointment Updated Successfully",
+                "success",
+                () => navigate("/appointments")
+              );
           }
         )
       : createAppointment(toSubmit).then((res) => {
-          console.log(res);
           if (res?.error?.data?.hasError)
-            return alert(res?.error?.data?.message);
-          else alert("Created Successfully");
-          navigate("/appointments");
+            return setToast(true, res?.error?.data?.message, "error");
+          else
+            setToast(true, "Appointment Created Successfully", "success", () =>
+              navigate("/appointments")
+            );
         });
   }
 
@@ -247,6 +266,13 @@ export const AppointmentForm = ({
           )}
         </span>
       </Button>
+      <CustomizedSnackbar
+        open={openSnackbar}
+        close={!openSnackbar}
+        message={snackbarMessage}
+        handleClose={closeToast}
+        severity={snackbarSeverity}
+      />
     </form>
   );
 };

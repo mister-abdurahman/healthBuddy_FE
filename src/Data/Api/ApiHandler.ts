@@ -53,7 +53,7 @@ export const CoreApi = createApi({
       providesTags: ["doctor"],
     }),
     getUpcomingAppointment: builder.query({
-      query: () => `/appointment/upcoming`,
+      query: (userId) => `/appointment/upcoming/${userId}`,
       providesTags: ["appointment"],
     }),
     getWallet: builder.query({
@@ -139,6 +139,14 @@ export const AuthApi = createApi({
   baseQuery: baseQueryWithReauth(),
   tagTypes: ["auth"],
   endpoints: (builder) => ({
+    registerUser: builder.mutation({
+      query: (signinDetails) => ({
+        url: "/auth/register",
+        method: "POST",
+        body: signinDetails,
+      }),
+      invalidatesTags: ["auth"],
+    }),
     loginUser: builder.mutation({
       query: (loginDetails) => ({
         url: "/auth/login",
@@ -161,5 +169,6 @@ export const AuthApi = createApi({
 export const {
   useLoginUserMutation,
   useUpdateUserMutation,
+  useRegisterUserMutation,
   //   useCreateIndividualPatientMutation,
 } = AuthApi;

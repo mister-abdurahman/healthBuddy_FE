@@ -17,6 +17,9 @@ import { getToken, signIn } from "../Data/State/AuthSlice";
 import { useDispatch } from "react-redux";
 import { getInfo } from "../Data/State/UserSlice";
 import { SpinnerMini } from "../ui/SpinnerMini";
+import { useState } from "react";
+import CustomizedSnackbar from "../ui/SnackBar";
+import { useToast } from "../hooks/useToast";
 
 function Copyright(props: any) {
   return (
@@ -48,13 +51,24 @@ function Copyright(props: any) {
 
 const schema = yup.object().shape({
   email: yup.string().email().required(),
-  password: yup.string().min(6).max(32).required(),
+  password: yup.string().required(),
 });
 
 export default function SignIn() {
   // const { signInOut } = useAppContext();
+  // const [openSnackbar, setOpenSnackbar] = useState(false);
+  // const [snackbarMessage, setSnackbarMessage] = useState("");
+  // const [snackbarSeverity, setSnackbarSeverity] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const {
+    openSnackbar,
+    snackbarMessage,
+    snackbarSeverity,
+    setToast,
+    closeToast,
+  } = useToast();
 
   const [loginUser, { isLoading: loadingLogin }] = useLoginUserMutation();
 
@@ -68,8 +82,62 @@ export default function SignIn() {
   const submit: SubmitHandler<FieldValues> = async (data) => {
     console.log(data);
 
+    // loginUser(data)
+    //   .then((res: any) => {
+    //     if (res?.data?.hasError)
+    //       return setToast(true, res?.data?.message, "error");
+    //     localStorage.setItem(
+    //       "userData",
+    //       JSON.stringify({
+    //         _id: res?.data?.user._id,
+    //         firstName: res?.data?.user.firstName,
+    //         lastName: res?.data?.user.lastName,
+    //         email: res?.data?.user.email,
+    //         phoneNumber: res?.data?.user.phoneNumber,
+    //         profilePicture: res?.data?.user.profilePicture,
+    //         facebookHandle: res?.data?.user.facebookHandle,
+    //         twitterHandle: res?.data?.user.twitterHandle,
+    //         linkedInHandle: res?.data?.user.linkedInHandle,
+    //         address: res?.data?.user.address,
+    //         state: res?.data?.user.state,
+    //         walletId: res?.data?.user.walletId,
+    //       })
+    //     );
+    //     localStorage.setItem("signedIn", JSON.stringify({ signedIn: true }));
+    //     localStorage.setItem(
+    //       "token",
+    //       JSON.stringify({ token: res?.data?.token })
+    //     );
+
+    //     dispatch(getToken(res?.data?.token));
+    //     dispatch(signIn());
+    //     dispatch(
+    //       getInfo({
+    //         _id: res?.data?.user._id,
+    //         firstName: res?.data?.user.firstName,
+    //         lastName: res?.data?.user.lastName,
+    //         email: res?.data?.user.email,
+    //         phoneNumber: res?.data?.user.phoneNumber,
+    //         profilePicture: res?.data?.user.profilePicture,
+    //         facebookHandle: res?.data?.user.facebookHandle,
+    //         twitterHandle: res?.data?.user.twitterHandle,
+    //         linkedInHandle: res?.data?.user.linkedInHandle,
+    //         address: res?.data?.user.address,
+    //         state: res?.data?.user.state,
+    //         walletId: res?.data?.user.walletId,
+    //       })
+    //     );
+    //     // console.log("fulfilled", payload);
+    //     setToast(true, "Log in Successfull", "success");
+    //   })
+    //   .then(() => {
+    //     navigate("/");
+    //   });
+
     try {
       const payload = await loginUser(data).unwrap();
+
+      // alert(payload?.error?.data?.message || "error!");
 
       localStorage.setItem(
         "userData",
@@ -110,10 +178,14 @@ export default function SignIn() {
         })
       );
       // console.log("fulfilled", payload);
-      navigate("/");
+      setToast(true, "Log in Successfull", "success", () => navigate("/"));
     } catch (error: unknown) {
       // console.error("rejected", error);
-      alert(error.data.message);
+      setToast(true, error.data.message, "error");
+      // setOpenSnackbar(true);
+      // setSnackbarMessage(error.data.message);
+      // setSnackbarSeverity("error");
+      // alert(error.data.message);
     }
     reset();
   };
@@ -221,6 +293,13 @@ export default function SignIn() {
         </Box>
       </Box>
       <Copyright sx={{ mt: 5 }} />
+      <CustomizedSnackbar
+        open={openSnackbar}
+        close={!openSnackbar}
+        message={snackbarMessage}
+        handleClose={closeToast}
+        severity={snackbarSeverity}
+      />
     </Container>
   );
 }

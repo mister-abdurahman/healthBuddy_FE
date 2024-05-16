@@ -16,7 +16,7 @@ export const HealthNews = () => {
 
   return (
     <PageContainer title="HealthNews">
-      <div className="flex gap-4 flex-wrap">
+      <div className="flex gap-4 flex-wrap justify-center">
         {news.data.map((el, i) => (
           <NewsCard key={i} news={el} />
         ))}

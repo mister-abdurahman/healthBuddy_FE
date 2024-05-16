@@ -11,9 +11,18 @@ import dayjs from "dayjs";
 import { Spinner } from "../ui/Spinner";
 import { ErrorComp } from "../ui/ErrorComp";
 import { SpinnerMini } from "../ui/SpinnerMini";
+import CustomizedSnackbar from "../ui/SnackBar";
+import { useToast } from "../hooks/useToast";
 
 export const Notifications = () => {
   const id = useSelector((state: RootState) => state.user.userDetails._id);
+  const {
+    openSnackbar,
+    snackbarMessage,
+    snackbarSeverity,
+    setToast,
+    closeToast,
+  } = useToast();
   const {
     data: notifications,
     isLoading: loadingNotifications,
@@ -30,12 +39,13 @@ export const Notifications = () => {
     const update = {
       read: true,
     };
-    updateNotification({ id, notification: update }).then(
-      (res: any) => {
-        if (res?.hasError) return alert(res?.message);
-        alert("Notification marked as read");
-      }
-    );
+    updateNotification({ id, notification: update }).then((res: any) => {
+      if (res?.hasError)
+        return setToast(true, res?.error?.data?.message, "error");
+      // if (res?.hasError) return alert(res?.message);
+      setToast(true, "Notification marked as read", "success");
+      // alert("Notification marked as read");
+    });
   }
 
   return (
@@ -77,6 +87,13 @@ export const Notifications = () => {
           )
         )}
       </ul>
+      <CustomizedSnackbar
+        open={openSnackbar}
+        close={!openSnackbar}
+        message={snackbarMessage}
+        handleClose={closeToast}
+        severity={snackbarSeverity}
+      />
     </PageContainer>
   );
 };

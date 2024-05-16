@@ -2,18 +2,20 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useRegisterUserMutation } from "../Data/Api/ApiHandler";
+import { SpinnerMini } from "../ui/SpinnerMini";
+import { useToast } from "../hooks/useToast";
+import CustomizedSnackbar from "../ui/SnackBar";
 
 const schema = yup.object().shape({
   firstName: yup.string().required(),
@@ -48,6 +50,20 @@ function Copyright(props: any) {
 }
 
 export default function SignUp() {
+  const navigate = useNavigate();
+
+  const {
+    openSnackbar,
+    snackbarMessage,
+    snackbarSeverity,
+    setToast,
+    closeToast,
+  } = useToast();
+
+  const [
+    registerUser,
+    { isLoading: registeringUser, isError: registeringError },
+  ] = useRegisterUserMutation();
   const {
     register,
     handleSubmit,
@@ -59,6 +75,17 @@ export default function SignUp() {
     console.log(data);
     // signInOut();
     // navigate("/dashboard");
+    registerUser(data).then((res) => {
+      if (res?.error?.data?.hasError || registeringError)
+        return setToast(true, res?.error?.data?.message, "error");
+      // return alert(res?.error?.data?.message || "error!");
+
+      setToast(true, "User Registered successfully", "success", () =>
+        navigate("/signin")
+      );
+      // alert("User Registered successfully");
+      reset();
+    });
   };
 
   return (
@@ -238,7 +265,7 @@ export default function SignUp() {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
-            Sign Up
+            {registeringUser ? <SpinnerMini /> : "Sign Up"}
           </Button>
           <Grid container justifyContent="flex-end">
             <Grid item>
@@ -248,6 +275,13 @@ export default function SignUp() {
         </Box>
       </Box>
       <Copyright sx={{ mt: 5 }} />
+      <CustomizedSnackbar
+        open={openSnackbar}
+        close={!openSnackbar}
+        message={snackbarMessage}
+        handleClose={closeToast}
+        severity={snackbarSeverity}
+      />
     </Container>
   );
 }

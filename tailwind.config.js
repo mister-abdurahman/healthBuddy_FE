@@ -17,6 +17,8 @@ export default {
       backgroundImage: {
         seeYouSoonImage:
           "linear-gradient(to right, rgba(44, 61, 143, 1), rgba(44, 61, 143, 0.4) ,rgba(0, 0, 0, 0)) ,url('/src/assets/seeyousoon.jpg')",
+        noAppointmentImage:
+          "linear-gradient(to right, rgba(44, 61, 143, 1), rgba(44, 61, 143, 0.4) ,rgba(0, 0, 0, 0)) ,url('/src/assets/plus_sign.jpg')",
       },
     },
   },

@@ -1,5 +1,4 @@
 import {
-  Button,
   Card,
   CardActionArea,
   CardActions,
@@ -12,6 +11,8 @@ import demoImage from "../../assets/react.svg";
 import { MdContentCopy } from "react-icons/md";
 import { FaLink } from "react-icons/fa";
 import dayjs from "dayjs";
+import { useToast } from "../../hooks/useToast";
+import CustomizedSnackbar from "../../ui/SnackBar";
 
 interface IProps {
   image: string;
@@ -22,6 +23,13 @@ interface IProps {
 }
 
 export const NewsCard = ({ news }: { news: IProps }) => {
+  const {
+    openSnackbar,
+    snackbarMessage,
+    snackbarSeverity,
+    setToast,
+    closeToast,
+  } = useToast();
   const { image, title, text, date, link } = news;
   return (
     <Card
@@ -55,7 +63,9 @@ export const NewsCard = ({ news }: { news: IProps }) => {
         <CopyToClipboard text={link}>
           <MdContentCopy
             className="cursor-pointer w-6 h-6 fill-secondary"
-            onClick={() => alert("Link copied to clipboard")}
+            onClick={() =>
+              setToast(true, "Link copied to clipboard", "success")
+            }
           />
         </CopyToClipboard>
 
@@ -63,6 +73,13 @@ export const NewsCard = ({ news }: { news: IProps }) => {
           <FaLink className="cursor-pointer w-6 h-6 fill-secondary" />
         </a>
       </CardActions>
+      <CustomizedSnackbar
+        open={openSnackbar}
+        close={!openSnackbar}
+        message={snackbarMessage}
+        handleClose={closeToast}
+        severity={snackbarSeverity}
+      />
     </Card>
   );
 };

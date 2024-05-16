@@ -6,8 +6,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Data/State/store";
 import { SpinnerMini } from "../../ui/SpinnerMini";
 import { getInfo } from "../../Data/State/UserSlice";
+import { useToast } from "../../hooks/useToast";
+import CustomizedSnackbar from "../../ui/SnackBar";
 
 export const ProfileForm = () => {
+  const {
+    openSnackbar,
+    snackbarMessage,
+    snackbarSeverity,
+    setToast,
+    closeToast,
+  } = useToast();
   const dispatch = useDispatch();
   const [updateUser, { isLoading: loadingUser }] = useUpdateUserMutation();
   const user = useSelector((state: RootState) => state.user.userDetails);
@@ -42,7 +51,10 @@ export const ProfileForm = () => {
 
   function submitForm(data) {
     updateUser({ id: user._id, data }).then((res: any) => {
-      if (res.hasError) return alert(res.message);
+      if (res?.error?.data?.hasError)
+        return setToast(true, res?.error?.data?.message, "error");
+      // return alert(res?.error?.data?.message || "error!");
+      // if (res.hasError) return alert(res.message);
       localStorage.setItem(
         "userData",
         JSON.stringify({
@@ -76,7 +88,8 @@ export const ProfileForm = () => {
           walletId: user.walletId,
         })
       );
-      alert("User details Updated");
+      setToast(true, "User details Updated", "success");
+      // alert("User details Updated");
     });
   }
 
@@ -180,6 +193,13 @@ export const ProfileForm = () => {
       <Button disabled={loadingUser}>
         {loadingUser ? <SpinnerMini /> : <span>Update</span>}
       </Button>
+      <CustomizedSnackbar
+        open={openSnackbar}
+        close={!openSnackbar}
+        message={snackbarMessage}
+        handleClose={closeToast}
+        severity={snackbarSeverity}
+      />
     </form>
   );
 };
