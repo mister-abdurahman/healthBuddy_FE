@@ -8,7 +8,8 @@ const version = "1";
 
 const baseQueryWithReauth = () =>
   fetchBaseQuery({
-    baseUrl: `http://localhost:3000/api/v${version}`,
+    baseUrl: `https://hb-api-seven.vercel.app/api/v${version}`,
+    // baseUrl: `http://localhost:3000/api/v${version}`,
     prepareHeaders: (headers: Headers, { getState }) => {
       const token = (getState() as RootState).auth?.token;
       headers.set("Content-Type", "application/json; charset=utf-8");
